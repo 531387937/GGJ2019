@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerCtr : MonoBehaviour
 {
+    public Animator anim;
     public enum State {MoveState,AttackState,FlashState,HookState, RopeState }
     private State currentState;
     public float JumpForce = 300;
@@ -43,6 +44,9 @@ public class PlayerCtr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        anim.SetBool("onground", IsOnGround);
+        anim.SetFloat("speed", Mathf.Abs(Input.GetAxis("Horizontal")));
+        
         switch(currentState)
         {
             case State.MoveState:
@@ -100,10 +104,20 @@ public class PlayerCtr : MonoBehaviour
     {
         if (Input.GetAxis("Horizontal") != 0)
         {
+            if(Input.GetAxis("Horizontal")>0)
+            {
+                this.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+            }
+
             gameObject.transform.Translate(Vector2.right * Input.GetAxis("Horizontal") * speed * Time.deltaTime);
         }
         if (Input.GetKeyDown(KeyCode.Space) && IsOnGround)
         {
+            anim.SetTrigger("jump");
             rig.AddForce(new Vector2(0, JumpForce));
         }
         //进入冲刺阶段
