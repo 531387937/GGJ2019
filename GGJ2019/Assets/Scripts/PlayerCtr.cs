@@ -107,7 +107,7 @@ public class PlayerCtr : MonoBehaviour
             rig.AddForce(new Vector2(0, JumpForce));
         }
         //进入冲刺阶段
-        if (/*timer < FlashTime && !Flash && */Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)&&Flash)
+        if (/*timer < FlashTime && !Flash && */Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") >= 0)&&Flash)
         {
             currentState = State.FlashState;
             currentDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
