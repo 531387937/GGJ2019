@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCtr : MonoBehaviour
 {
-    public enum State {MoveState,AttackState,FlashState,HookState }
+    public enum State {MoveState,AttackState,FlashState,HookState, RopeState }
     private State currentState;
     public float JumpForce = 300;
     public float speed;//移动速度
@@ -51,6 +51,10 @@ public class PlayerCtr : MonoBehaviour
             case State.FlashState:
                 OnFlashState();
                 break;
+            case State.RopeState:
+                OnRopeState();
+                break;
+
         }
         if(IsOnGround)
         {
@@ -140,6 +144,7 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
             currentState = State.MoveState;
             Hook.SetActive(false);
         }
+
     }
     void OnFlashState()
     {
@@ -157,6 +162,18 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
            
         }
     }
+    void OnRopeState()
+    {
+       
+
+
+    }
+
+    void SwitchRopeState()
+    {
+        currentState = State.RopeState;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ground"))
