@@ -24,6 +24,10 @@ public class PlayerCtr : MonoBehaviour
     public float HookLen;//钩子的长度
     private LineRenderer HookLine;
     public float HookTime;
+    public float grav_force;
+    public float force;
+    public float drag;
+  
     // Start is called before the first frame update
     void Start()
     {
@@ -164,31 +168,62 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
     }
     void OnRopeState()
     {
-        rig.simulated = true;
-        rig.gravityScale = 0;
-
-        HookLine.SetPosition(0, gameObject.transform.position);
-
-        Vector3 d = gameObject.transform.position -Hook.transform.position;
-        d = Vector3.Normalize(d);
-        Vector2 dir = new Vector2(d.x, d.y);
-        Vector2 dir_Ver = new Vector2(-d.y, d.x);
-        //float angle = Mathf.Atan(d.x/d.y)*180/Mathf.PI;
-
+        
         
 
-        Debug.Log(d);
-        Debug.Log(-dir_Ver.magnitude);
-        if (Input.GetAxis("Horizontal") != 0)
+        if (rig.simulated==false)
+        {
+            rig.velocity = Vector3.zero;
+            rig.gravityScale = 0;
+            rig.simulated = true;
+            rig.drag = drag;
+        }
+        HookLine.SetPosition(0, gameObject.transform.position);
+        HookLine.SetPosition(1, Hook.gameObject.transform.position);
+
+        Vector3 d = gameObject.transform.position - Hook.transform.position;
+        Debug.Log(Vector3.Distance(Vector3.zero, d));
+        d = Vector3.Normalize(d);
+        //Vector2 dir = new Vector2(d.x, d.y);
+        //Vector2 dir_Ver = new Vector2(-d.y, d.x);
+        Vector3 d_ver = new Vector3(-d.y, d.x, 0);
+        float angle = Mathf.Atan(d.x / d.y) ;
+
+        //rig.AddForce(d_ver * 100 , ForceMode2D.Force);
+        Vector2 g = d - Vector3.down;
+
+
+
+        rig.AddForce(d_ver * grav_force * Mathf.Sin(angle), ForceMode2D.Force);
+        //rig.velocity = d_ver * grav_force * Mathf.Sin(angle);
+
+
+
+        //Debug.Log("Before:"+rig.velocity);
+
+        if (Input.GetKey(KeyCode.D))
         {
 
-            //rig.AddForce(dir_Ver * 10 * Input.GetAxis("Horizontal"), ForceMode2D.Force);
-            rig.velocity = dir_Ver * 5 * Input.GetAxis("Horizontal");
+             rig.AddForce(d_ver * force * Mathf.Cos(angle), ForceMode2D.Force);
+            //rig.velocity = d_ver * force * Mathf.Cos(angle);
         }
         else
         {
-            rig.velocity = Vector2.zero;
+           // rig.velocity = Vector3.zero;
         }
+    
+        if (Input.GetKey(KeyCode.A))
+        {
+
+            rig.AddForce(-d_ver * force * Mathf.Cos(angle), ForceMode2D.Force);
+
+           // rig.velocity = -d_ver * force * Mathf.Cos(angle);
+        }
+        else
+        {
+           // rig.velocity = Vector3.zero;
+        }
+
 
 
         if (Input.GetMouseButtonDown(0))
@@ -197,6 +232,11 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
             timer = 0;
             currentState = State.MoveState;
             Hook.SetActive(false);
+            rig.drag = 2;
+          
+            
+            rig.velocity = d_ver * Vector2.Distance(Vector2.zero, rig.velocity);
+            Debug.Log(rig.velocity);
         }
 
 
