@@ -19,12 +19,19 @@ public class PlayerCtr : MonoBehaviour
     Vector2 currentDir;
     private bool IsOnGround = true;//是否在地上
     public GameObject Hook;
+    public Camera ca;
+    private Vector3 currentHookDir;
+    public float HookLen;//钩子的长度
+    private LineRenderer HookLine;
+    public float HookTime;
     // Start is called before the first frame update
     void Start()
     {
         rig = GetComponent<Rigidbody2D>();
         currentSpeed = FlashSpeed;
         currentState = State.MoveState;
+        HookLine = Hook.GetComponent<LineRenderer>();
+        
     }
 
     // Update is called once per frame
@@ -98,6 +105,14 @@ public class PlayerCtr : MonoBehaviour
             //Move = false;
         }
         //勾人ing
+        if(Input.GetMouseButtonDown(0))
+        {
+            Hook.transform.position = gameObject.transform.position;
+            rig.velocity = Vector2.zero;
+           currentHookDir =  (ca.ScreenToWorldPoint(Input.mousePosition)-gameObject.transform.position);
+            currentState = State.HookState;
+            
+        }
     }
     void OnAttackState()
     {
@@ -105,20 +120,41 @@ public class PlayerCtr : MonoBehaviour
     }
     void OnHookState()
     {
-        rig.AddForce(-Physics2D.gravity);
+        
+        HookLine.SetPosition(0, gameObject.transform.position);
+        HookLine.SetPosition(1, Hook.gameObject.transform.position);
+        rig.simulated = false;
+        rig.velocity = Vector2.zero;
+        Hook.SetActive(true);
+        if(timer<HookTime/2)
+        Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir.y).normalized * HookLen * Time.deltaTime);
+        timer += Time.deltaTime;
+        if (timer >= (HookTime/2))
+        {
+Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir.y).normalized * HookLen * Time.deltaTime*-1);
+        }
+            if (timer>=HookTime)
+        {
+            rig.simulated = true;
+            timer = 0;
+            currentState = State.MoveState;
+            Hook.SetActive(false);
+        }
     }
     void OnFlashState()
     {
+        rig.simulated = false;
         Flash = false;
         rig.AddForce(-Physics2D.gravity);
         currentSpeed = Mathf.MoveTowards(currentSpeed, 0, FlashTime * 10);
         gameObject.transform.Translate(currentDir.normalized * currentSpeed * Time.deltaTime);
         timer += Time.deltaTime;
         if (timer >= FlashTime)
-        {
+        { rig.simulated = true;
             timer = 0;
             currentSpeed = FlashSpeed;
             currentState = State.MoveState;
+           
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
