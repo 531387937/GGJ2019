@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCtr : MonoBehaviour
 {
-    public enum State {MoveState,AttackState,FlashState,HookState }
+    public enum State {MoveState,AttackState,FlashState,HookState, RopeState }
     private State currentState;
     public float JumpForce = 300;
     public float speed;//移动速度
@@ -24,6 +24,10 @@ public class PlayerCtr : MonoBehaviour
     public float HookLen;//钩子的长度
     private LineRenderer HookLine;
     public float HookTime;
+    public float grav_force;
+    public float force;
+    public float drag;
+  
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +55,10 @@ public class PlayerCtr : MonoBehaviour
             case State.FlashState:
                 OnFlashState();
                 break;
+            case State.RopeState:
+                OnRopeState();
+                break;
+
         }
         if(IsOnGround)
         {
@@ -140,6 +148,7 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
             currentState = State.MoveState;
             Hook.SetActive(false);
         }
+
     }
     void OnFlashState()
     {
@@ -157,6 +166,87 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
            
         }
     }
+    void OnRopeState()
+    {
+        
+        
+
+        if (rig.simulated==false)
+        {
+            rig.velocity = Vector3.zero;
+            rig.gravityScale = 0;
+            rig.simulated = true;
+            rig.drag = drag;
+        }
+        HookLine.SetPosition(0, gameObject.transform.position);
+        HookLine.SetPosition(1, Hook.gameObject.transform.position);
+
+        Vector3 d = gameObject.transform.position - Hook.transform.position;
+        Debug.Log(Vector3.Distance(Vector3.zero, d));
+        d = Vector3.Normalize(d);
+        //Vector2 dir = new Vector2(d.x, d.y);
+        //Vector2 dir_Ver = new Vector2(-d.y, d.x);
+        Vector3 d_ver = new Vector3(-d.y, d.x, 0);
+        float angle = Mathf.Atan(d.x / d.y) ;
+
+        //rig.AddForce(d_ver * 100 , ForceMode2D.Force);
+        Vector2 g = d - Vector3.down;
+
+
+
+        rig.AddForce(d_ver * grav_force * Mathf.Sin(angle), ForceMode2D.Force);
+        //rig.velocity = d_ver * grav_force * Mathf.Sin(angle);
+
+
+
+        //Debug.Log("Before:"+rig.velocity);
+
+        if (Input.GetKey(KeyCode.D))
+        {
+
+             rig.AddForce(d_ver * force * Mathf.Cos(angle), ForceMode2D.Force);
+            //rig.velocity = d_ver * force * Mathf.Cos(angle);
+        }
+        else
+        {
+           // rig.velocity = Vector3.zero;
+        }
+    
+        if (Input.GetKey(KeyCode.A))
+        {
+
+            rig.AddForce(-d_ver * force * Mathf.Cos(angle), ForceMode2D.Force);
+
+           // rig.velocity = -d_ver * force * Mathf.Cos(angle);
+        }
+        else
+        {
+           // rig.velocity = Vector3.zero;
+        }
+
+
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            rig.gravityScale = 1.5f;
+            timer = 0;
+            currentState = State.MoveState;
+            Hook.SetActive(false);
+            rig.drag = 2;
+          
+            
+            rig.velocity = d_ver * Vector2.Distance(Vector2.zero, rig.velocity);
+            Debug.Log(rig.velocity);
+        }
+
+
+    }
+
+    void SwitchRopeState()
+    {
+        currentState = State.RopeState;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ground"))
