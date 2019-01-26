@@ -4,11 +4,22 @@ using UnityEngine;
 
 public class RedGhost_Attack : StateMachineBehaviour
 {
+    public GameObject bullet;
+    Transform transform;
+
+    private void OnEnable()
+    {
+        transform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        GameObject go;
+        go = Instantiate(bullet, animator.transform.position, Quaternion.identity);
+        Vector3 dir = transform.position - animator.transform.position;
+        go.GetComponent<Rigidbody2D>().velocity = new Vector2(dir.x, dir.y);
+    }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

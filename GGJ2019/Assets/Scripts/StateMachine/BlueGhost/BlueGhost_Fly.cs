@@ -8,6 +8,7 @@ public class BlueGhost_Fly : StateMachineBehaviour
     Transform transform;
     float time;
     float sign;
+    float CenterY;
 
     private void OnEnable()
     {
@@ -18,15 +19,18 @@ public class BlueGhost_Fly : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         sign = Mathf.Sign((transform.position - animator.transform.position).x);
+        CenterY = animator.transform.position.y;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         time += Time.deltaTime;
-        animator.transform.position += blue_data.Speed * Time.deltaTime * Vector3.right * sign;
-        animator.transform.position += blue_data.Amplitude * Mathf.Sin(time * blue_data.Cycle) * Vector3.up;
+        float y = blue_data.Amplitude * Mathf.Sin(time * blue_data.Cycle) + CenterY;
+        float x = blue_data.Speed * Time.deltaTime * sign + animator.transform.position.x;
+        animator.transform.position = new Vector3(x, y, animator.transform.position.z);
         CheckDir(animator);
+        CheckPlayer(animator);
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -51,5 +55,13 @@ public class BlueGhost_Fly : StateMachineBehaviour
     {
         if (Vector3.Distance(animator.transform.position, transform.position) >= blue_data.ViewRange)
             sign = -sign;
+    }
+
+    private void CheckPlayer(Animator animator)
+    {
+        if (Vector3.Distance(animator.transform.position, transform.position) < blue_data.ViewRange)
+            animator.SetBool("InView", true);
+        else
+            animator.SetBool("InView", false);
     }
 }
