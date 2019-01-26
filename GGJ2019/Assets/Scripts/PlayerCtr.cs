@@ -22,12 +22,14 @@ public class PlayerCtr : MonoBehaviour
     public Camera ca;
     private Vector3 currentHookDir;
     public float HookLen;//钩子的长度
+    private bool HookBacking = false;
     private LineRenderer HookLine;
     public float HookTime;
     public float grav_force;
     public float force;
     public float drag;
-  
+    public AudioSource AttackSound;
+    public AudioSource RopeSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -113,13 +115,19 @@ public class PlayerCtr : MonoBehaviour
             //Move = false;
         }
         //勾人ing
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(1))
         {
+            RopeSound.Play();
+            HookBacking = false;
             Hook.transform.position = gameObject.transform.position;
             rig.velocity = Vector2.zero;
            currentHookDir =  (ca.ScreenToWorldPoint(Input.mousePosition)-gameObject.transform.position);
-            currentState = State.HookState;
-            
+            currentState = State.HookState;           
+        }
+        if(Input.GetMouseButtonDown(0))
+        {
+            AttackSound.Play();
+            currentState = State.AttackState;
         }
     }
     void OnAttackState()
@@ -127,8 +135,14 @@ public class PlayerCtr : MonoBehaviour
 
     }
     void OnHookState()
-    {
-        
+    {if (Hook.transform.childCount != 0)
+        {
+            if (Vector2.Distance(Hook.transform.GetChild(0).position, transform.position) <= 1.6f)
+
+            {
+                Hook.transform.GetChild(0).SetParent(null);
+            }
+        }
         HookLine.SetPosition(0, gameObject.transform.position);
         HookLine.SetPosition(1, Hook.gameObject.transform.position);
         rig.simulated = false;
@@ -139,10 +153,16 @@ public class PlayerCtr : MonoBehaviour
         timer += Time.deltaTime;
         if (timer >= (HookTime/2))
         {
-Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir.y).normalized * HookLen * Time.deltaTime*-1);
+
+            Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir.y).normalized * HookLen * Time.deltaTime*-1);
         }
+        //if(timer>=(HookTime-0.2f))
+        //{
+        //    Hook.transform.GetChild(0).SetParent(null);
+        //}
             if (timer>=HookTime)
         {
+            
             rig.simulated = true;
             timer = 0;
             currentState = State.MoveState;
@@ -162,15 +182,11 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
         { rig.simulated = true;
             timer = 0;
             currentSpeed = FlashSpeed;
-            currentState = State.MoveState;
-           
+            currentState = State.MoveState;         
         }
     }
     void OnRopeState()
     {
-        
-        
-
         if (rig.simulated==false)
         {
             rig.velocity = Vector3.zero;
@@ -226,7 +242,7 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
 
 
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
             rig.gravityScale = 1.5f;
             timer = 0;
@@ -246,7 +262,23 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
     {
         currentState = State.RopeState;
     }
-
+    void HookBack()
+    {
+        if (!HookBacking)
+        { timer = HookTime - timer;
+            HookBacking = true;
+        }
+    }
+    void HookChildBack(GameObject Enemy)
+    {
+        if (!HookBacking)
+        {
+            if (Vector2.Distance(Enemy.transform.position, transform.position) > 1.7f)
+            { Enemy.transform.SetParent(Hook.transform); }
+            timer = HookTime - timer;
+            HookBacking = true;
+        }
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ground"))
