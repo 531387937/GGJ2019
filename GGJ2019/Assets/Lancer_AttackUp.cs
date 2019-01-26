@@ -2,28 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lancer_HorizentalFind : StateMachineBehaviour
+public class Lancer_AttackUp : StateMachineBehaviour
 {
     public Lancer_ScriptableObject lancer_data;
     Transform transform;
-    float Height;
 
     private void OnEnable()
     {
         transform = GameObject.FindGameObjectWithTag("Player").transform;
-
     }
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        Height = animator.GetComponent<SpriteRenderer>().bounds.extents.y / 2.0f;
-    }
+    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Check(animator);
-        Approach(animator);
+        CheckPosition(animator);
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -44,37 +41,19 @@ public class Lancer_HorizentalFind : StateMachineBehaviour
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
 
-    private void Check(Animator animator)
+    private void CheckPosition(Animator animator)
     {
-        if(Mathf.Abs(transform.position.y - animator.transform.position.y) > Height)
+        if ((transform.position.y > animator.transform.position.y) && (Mathf.Abs(transform.position.x - animator.transform.position.x) < lancer_data.CompareRange))
         {
-            if ((Mathf.Abs(transform.position.x - animator.transform.position.x) < lancer_data.CompareRange))
-            {
-                animator.SetBool("Upward", true);
-            }
-            else
-            {
-                animator.SetBool("Upward", false);
-            }
+            animator.SetBool("Upward", true);
         }
         else
         {
-            if (Mathf.Abs(transform.position.x - animator.transform.position.x) < lancer_data.AttackRange)
-            {
-                animator.SetBool("Forward", true);
-            }
-            else
-            {
-                animator.SetBool("Forward", false);
-            }
+            animator.SetBool("Upward", false);
         }
-    }
-
-    private void Approach(Animator animator)
-    {
-        float sign = Mathf.Sign((transform.position - animator.transform.position).x);
-        if(Vector3.Distance(transform.position,animator.transform.position) > 0.2)
-            animator.transform.Translate(sign * Vector2.right * lancer_data.Speed * Time.deltaTime);
-
+        if (Vector3.Distance(animator.transform.position, transform.position) < lancer_data.ViewRange)
+            animator.SetBool("InView", true);
+        else
+            animator.SetBool("InView", false);
     }
 }
