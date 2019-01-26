@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4b398b23466633a46b43a54743522391
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Attack: {fileID: 8300000, guid: 518c6fc518db8a64c98f2eec496bed16, type: 3}
+  - BeAttacked: {instanceID: 0}
+  - Rope: {fileID: 8300000, guid: e65a560fec48f0249a1f62d55f9ac4f9, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
