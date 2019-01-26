@@ -6,23 +6,27 @@ public class Slime_Alertness : StateMachineBehaviour
 {
     public Slime_ScriptableObject slime_data;
     Transform transform;
+    float deltaTime;
 
     private void OnEnable()
     {
         transform = GameObject.FindGameObjectWithTag("Player").transform;
+        deltaTime = 0;
     }
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        CheckAttackRange(animator);
-    }
+    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+        
+    //}
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        CheckPlayer(animator);
+        CheckAttackRange(animator);
+        UpdateCD(animator);
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -51,6 +55,27 @@ public class Slime_Alertness : StateMachineBehaviour
         else
         {
             animator.SetBool("InAttackRange", false);
+        }
+    }
+
+    private void CheckPlayer(Animator animator)
+    {
+        if (Vector3.Distance(animator.transform.position, transform.position) < slime_data.ViewRange)
+            animator.SetBool("InView", true);
+        else
+            animator.SetBool("InView", false);
+    }
+
+    private void UpdateCD(Animator animator)
+    {
+        if (deltaTime <= 0)
+        {
+            animator.SetTrigger("CD");
+            deltaTime = slime_data.AttackCD;
+        }
+        else
+        {
+            deltaTime -= Time.deltaTime;
         }
     }
 }
