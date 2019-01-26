@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCtr : MonoBehaviour
 {
-    public enum State {MoveState,AttackState,FlashState,HookState }
+    public enum State {MoveState,AttackState,FlashState,HookState, RopeState }
     private State currentState;
     public float JumpForce = 300;
     public float speed;//移动速度
@@ -51,6 +51,10 @@ public class PlayerCtr : MonoBehaviour
             case State.FlashState:
                 OnFlashState();
                 break;
+            case State.RopeState:
+                OnRopeState();
+                break;
+
         }
         if(IsOnGround)
         {
@@ -140,6 +144,7 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
             currentState = State.MoveState;
             Hook.SetActive(false);
         }
+
     }
     void OnFlashState()
     {
@@ -157,6 +162,51 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
            
         }
     }
+    void OnRopeState()
+    {
+        rig.simulated = true;
+        rig.gravityScale = 0;
+
+        HookLine.SetPosition(0, gameObject.transform.position);
+
+        Vector3 d = gameObject.transform.position -Hook.transform.position;
+        d = Vector3.Normalize(d);
+        Vector2 dir = new Vector2(d.x, d.y);
+        Vector2 dir_Ver = new Vector2(-d.y, d.x);
+        //float angle = Mathf.Atan(d.x/d.y)*180/Mathf.PI;
+
+        
+
+        Debug.Log(d);
+        Debug.Log(-dir_Ver.magnitude);
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+
+            //rig.AddForce(dir_Ver * 10 * Input.GetAxis("Horizontal"), ForceMode2D.Force);
+            rig.velocity = dir_Ver * 5 * Input.GetAxis("Horizontal");
+        }
+        else
+        {
+            rig.velocity = Vector2.zero;
+        }
+
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            rig.gravityScale = 1.5f;
+            timer = 0;
+            currentState = State.MoveState;
+            Hook.SetActive(false);
+        }
+
+
+    }
+
+    void SwitchRopeState()
+    {
+        currentState = State.RopeState;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ground"))
