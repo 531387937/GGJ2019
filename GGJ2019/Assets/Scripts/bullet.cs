@@ -13,11 +13,11 @@ public class bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        transform.Rotate(new Vector3(0, 0, 25));
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag=="Player")
+        if(collision.gameObject.CompareTag("Player"))
         {
             Destroy(this.gameObject);
         }
