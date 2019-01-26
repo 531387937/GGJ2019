@@ -139,8 +139,12 @@ public class PlayerCtr : MonoBehaviour
         if (/*timer < FlashTime && !Flash && */Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") >= 0)&&Flash)
         {
             currentState = State.FlashState;
+           
             currentDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            
+            if(currentDir.y<0)
+            {
+                currentDir.y = 0;
+            }
             //Move = false;
         }
         //勾人ing
@@ -204,14 +208,15 @@ public class PlayerCtr : MonoBehaviour
     {
         rig.simulated = false;
         Flash = false;
-        rig.AddForce(-Physics2D.gravity);
-        currentSpeed = Mathf.MoveTowards(currentSpeed, 0, FlashTime * 10);
+        //rig.AddForce(-Physics2D.gravity);
+        currentSpeed = Mathf.MoveTowards(currentSpeed, 0, FlashTime * 25);
         gameObject.transform.Translate(currentDir.normalized * currentSpeed * Time.deltaTime);
         timer += Time.deltaTime;
         if (timer >= FlashTime)
         { rig.simulated = true;
             timer = 0;
             currentSpeed = FlashSpeed;
+            
             currentState = State.MoveState;         
         }
     }
