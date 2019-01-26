@@ -16,14 +16,24 @@ public class hook : MonoBehaviour
     {
        
     }
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag=="Floor")
         {
-           Player. SendMessage("SwitchRopeState");
+           Player.SendMessage("SwitchRopeState");
             
         }
-
+        if(collision.tag == "Enemy")
+        {
+            Player.SendMessage("HookChildBack",collision.gameObject);
+            //collision.gameObject.transform.SetParent(this.gameObject.transform);
+        }
+        else
+        {
+            print("asdfaedfaw");
+            Player.SendMessage("HookBack");
+        }
       
     }
 }
