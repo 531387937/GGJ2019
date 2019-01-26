@@ -31,6 +31,10 @@ public class PlayerCtr : MonoBehaviour
     public float drag;
     public AudioSource AttackSound;
     public AudioSource RopeSound;
+    private bool Invincible = false;//是否处于无敌
+    public float Invincible_Time = 0.5f;//无敌时间
+    private float Invincible_timer = 0;
+    public GameObject HitBox;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +48,15 @@ public class PlayerCtr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Invincible)//在无敌时
+        {
+            Invincible_timer += Time.deltaTime;
+        }
+        if(Invincible_timer>=Invincible_Time)
+        {
+            Invincible = false;
+            Invincible_timer = 0;
+        }
         anim.SetBool("onground", IsOnGround);
         anim.SetFloat("speed", Mathf.Abs(Input.GetAxis("Horizontal")));
         
@@ -102,6 +115,8 @@ public class PlayerCtr : MonoBehaviour
     }
     void OnMoveState()
     {
+        HitBox.SetActive(false);
+        anim.SetBool("Hit", false);
         if (Input.GetAxis("Horizontal") != 0)
         {
             if(Input.GetAxis("Horizontal")>0)
@@ -141,12 +156,13 @@ public class PlayerCtr : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             AttackSound.Play();
+            anim.SetBool("Hit", true);
             currentState = State.AttackState;
         }
     }
     void OnAttackState()
     {
-
+        HitBox.SetActive(true);
     }
     void OnHookState()
     {if (Hook.transform.childCount != 0)
@@ -291,6 +307,18 @@ public class PlayerCtr : MonoBehaviour
             { Enemy.transform.SetParent(Hook.transform); }
             timer = HookTime - timer;
             HookBacking = true;
+        }
+    }
+    void HitOver()
+    {
+        currentState = State.MoveState;
+    }
+    void Damage()
+    {
+        if(!Invincible)
+        {
+            Invincible = true;
+            HealthCtr.Health--;
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
