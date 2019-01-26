@@ -164,7 +164,40 @@ Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir
     }
     void OnRopeState()
     {
-       
+        rig.simulated = true;
+        rig.gravityScale = 0;
+
+        HookLine.SetPosition(0, gameObject.transform.position);
+
+        Vector3 d = gameObject.transform.position -Hook.transform.position;
+        d = Vector3.Normalize(d);
+        Vector2 dir = new Vector2(d.x, d.y);
+        Vector2 dir_Ver = new Vector2(-d.y, d.x);
+        //float angle = Mathf.Atan(d.x/d.y)*180/Mathf.PI;
+
+        
+
+        Debug.Log(d);
+        Debug.Log(-dir_Ver.magnitude);
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+
+            //rig.AddForce(dir_Ver * 10 * Input.GetAxis("Horizontal"), ForceMode2D.Force);
+            rig.velocity = dir_Ver * 5 * Input.GetAxis("Horizontal");
+        }
+        else
+        {
+            rig.velocity = Vector2.zero;
+        }
+
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            rig.gravityScale = 1.5f;
+            timer = 0;
+            currentState = State.MoveState;
+            Hook.SetActive(false);
+        }
 
 
     }
