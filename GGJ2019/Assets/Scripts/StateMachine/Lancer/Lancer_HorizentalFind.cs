@@ -16,7 +16,7 @@ public class Lancer_HorizentalFind : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Height = animator.GetComponent<SpriteRenderer>().bounds.extents.y / 2.0f;
+        Height = animator.GetComponent<SpriteRenderer>().bounds.extents.y;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -46,7 +46,7 @@ public class Lancer_HorizentalFind : StateMachineBehaviour
 
     private void Check(Animator animator)
     {
-        if(Mathf.Abs(transform.position.y - animator.transform.position.y) > Height)
+        if((transform.position.y - animator.transform.position.y) > Height)
         {
             if ((Mathf.Abs(transform.position.x - animator.transform.position.x) < lancer_data.CompareRange))
             {

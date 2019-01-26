@@ -6,7 +6,7 @@ public class Shielder_Pant : StateMachineBehaviour
 {
     public Shielder_ScriptableObject shielder_data;
     Transform transform;
-
+    float time = 0;
     private void OnEnable()
     {
         transform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -14,9 +14,14 @@ public class Shielder_Pant : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(transform.position.x - animator.transform.position.x < 0)
+        time = 0;
+        if (transform.position.x - animator.transform.position.x < 0)
         {
-            animator.transform.localScale = new Vector3(-1, 1, 1);
+            animator.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+        }
+        else
+        {
+            animator.transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
         }
     }
 
@@ -24,6 +29,11 @@ public class Shielder_Pant : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         CheckPlayer(animator);
+        time += Time.deltaTime;
+        if(time>1)
+        {
+            animator.SetTrigger("after1s");
+        }
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -51,4 +61,5 @@ public class Shielder_Pant : StateMachineBehaviour
         else
             animator.SetBool("InView", false);
     }
+  
 }
