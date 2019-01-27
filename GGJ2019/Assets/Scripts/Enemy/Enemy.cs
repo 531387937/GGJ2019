@@ -16,19 +16,19 @@ public class Enemy : MonoBehaviour
         Health--;
     }
 
-    public void BeHooked(Animator animator)
+    public void BeHooked()
     {
         animator.SetBool("Hooked", true);
-        StartCoroutine(HookTime(animator));
+        StartCoroutine(HookTime());
     }
 
-    IEnumerator HookTime(Animator animator)
+    IEnumerator HookTime()
     {
         yield return new WaitForSeconds(0.5f);
         animator.SetBool("Hooked", false);
     }
 
-    public void BeDead(Animator animator)
+    public void BeDead()
     {
         animator.SetBool("Dead", true);
     }
@@ -36,6 +36,6 @@ public class Enemy : MonoBehaviour
     public void CheckDead()
     {
         if (Health <= 0)
-            BeDead(GetComponent<Animator>());
+            BeDead();
     }
 }

@@ -37,6 +37,7 @@ public class PlayerCtr : MonoBehaviour
     public GameObject HitBox;
     public Transform HookPosition;
     private GameObject EnemyGameObject;
+    public GameObject Pa;
     // Start is called before the first frame update
     void Start()
     {
@@ -117,6 +118,8 @@ public class PlayerCtr : MonoBehaviour
     }
     void OnMoveState()
     {
+        
+        rig.simulated = true;
         HitBox.SetActive(false);
         anim.SetBool("Hit", false);
         if (Input.GetAxis("Horizontal") != 0)
@@ -164,10 +167,13 @@ public class PlayerCtr : MonoBehaviour
             AttackSound.Play();
             anim.SetBool("Hit", true);
             currentState = State.AttackState;
+            rig.simulated = false;
+            rig.velocity = Vector2.zero;
         }
     }
     void OnAttackState()
     {
+        //Pa.GetComponent<ParticleSystem>().Play();
         HitBox.SetActive(true);
     }
     void OnHookState()
@@ -306,6 +312,7 @@ public class PlayerCtr : MonoBehaviour
     void HookChildBack(GameObject Enemy)
     {
         print("31");
+        Enemy.GetComponent<Enemy>().BeHooked();
         if (!HookBacking)
         {
             EnemyGameObject = Enemy;
@@ -330,6 +337,8 @@ public class PlayerCtr : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Ground"))
         {
+            //Pa.SetActive(true);
+            //Pa.GetComponent<ParticleSystem>().Play();
             IsOnGround = true;
         }
     }
@@ -337,6 +346,7 @@ public class PlayerCtr : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            //Pa.SetActive(false);
             IsOnGround = false;
         }
     }
