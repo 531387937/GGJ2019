@@ -44,6 +44,5 @@ public class Slime_Attack : StateMachineBehaviour
 
     private void Attack(Animator animator)
     {
-        Debug.Log("Attack");
     }
 }

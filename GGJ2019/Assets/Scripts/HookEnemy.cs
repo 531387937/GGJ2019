@@ -15,7 +15,6 @@ public class HookEnemy : MonoBehaviour
         //print("1");
         if(collision.tag=="Enemy")
         {
-            print("2");
            
                 collision.transform.SetParent(null);           
         }

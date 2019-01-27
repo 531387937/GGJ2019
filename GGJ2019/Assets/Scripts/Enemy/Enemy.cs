@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    protected int Health;
+    public int Health;
     protected Animator animator;
     public GameObject smallSlime;
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
     }
 
     public void BeAttacked()
     {
+        Debug.Log("www");
         Health--;
+        StartCoroutine(hurt());
     }
 
     public void BeHooked()
@@ -50,4 +53,22 @@ public class Enemy : MonoBehaviour
         Instantiate(smallSlime, transform.position + Vector3.right, Quaternion.identity);
         Instantiate(smallSlime, transform.position + Vector3.left, Quaternion.identity);
     }
+    IEnumerator hurt()
+    {
+      
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
+        yield return new WaitForSeconds(0.1f);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        yield return new WaitForSeconds(0.1f);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
+        yield return new WaitForSeconds(0.1f);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        yield return new WaitForSeconds(0.1f);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
+        yield return new WaitForSeconds(0.1f);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        yield return new WaitForSeconds(0.1f);
+    }
+
+
 }

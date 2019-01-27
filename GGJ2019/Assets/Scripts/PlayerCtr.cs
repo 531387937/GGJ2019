@@ -319,7 +319,6 @@ public class PlayerCtr : MonoBehaviour
     }
     void HookChildBack(GameObject Enemy)
     {
-        print("31");
         Enemy.GetComponent<Enemy>().BeHooked();
         if (!HookBacking)
         {
@@ -345,8 +344,6 @@ public class PlayerCtr : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Ground"))
         {
-            //Pa.SetActive(true);
-            //Pa.GetComponent<ParticleSystem>().Play();
             IsOnGround = true;
         }
     }
@@ -354,7 +351,6 @@ public class PlayerCtr : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            //Pa.SetActive(false);
             IsOnGround = false;
         }
     }

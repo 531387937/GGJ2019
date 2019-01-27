@@ -37,7 +37,6 @@ public class BlueGhost_Fly : StateMachineBehaviour
         {
             dir = Mathf.Sign(transform.position.x - animator.transform.position.x);
         }
-        Debug.Log(dir);
         x = blue_data.Speed * Time.deltaTime * dir  + animator.transform.position.x;
 
 

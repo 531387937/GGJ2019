@@ -14,9 +14,11 @@ public class PlayerATk : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        print("32423423");
         if(collision.tag=="Enemy"&&!damage)
         {
             damage = true;
+            Debug.Log("Dama");
             collision.gameObject.SendMessage("BeAttacked");
         }
     }
