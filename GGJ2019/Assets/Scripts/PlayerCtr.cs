@@ -312,6 +312,7 @@ public class PlayerCtr : MonoBehaviour
     void HookChildBack(GameObject Enemy)
     {
         print("31");
+        Enemy.GetComponent<Enemy>().BeHooked();
         if (!HookBacking)
         {
             EnemyGameObject = Enemy;
