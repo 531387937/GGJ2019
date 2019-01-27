@@ -17,6 +17,7 @@ public class PlayerATk : MonoBehaviour
         print("32423423");
         if(collision.tag=="Enemy"&&!damage)
         {
+            this.gameObject.transform.parent.GetComponent<PlayerCtr>().Flash = true;
             damage = true;
             Debug.Log("Dama");
             collision.gameObject.SendMessage("BeAttacked");
