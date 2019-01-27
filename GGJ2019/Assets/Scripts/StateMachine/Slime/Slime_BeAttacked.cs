@@ -5,10 +5,8 @@ using UnityEngine;
 public class Slime_BeAttacked : StateMachineBehaviour
 {
     public Slime_ScriptableObject slime_data;
-    Slime slime;
     private void OnEnable()
     {
-        slime = GameObject.FindGameObjectWithTag("Player").GetComponent<Slime>();
     }
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
