@@ -31,7 +31,7 @@ public class hook : MonoBehaviour
         }
         else
         {
-            print("asdfaedfaw");
+
             Player.SendMessage("HookBack");
         }
       
