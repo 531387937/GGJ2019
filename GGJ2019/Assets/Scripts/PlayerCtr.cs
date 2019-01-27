@@ -152,7 +152,7 @@ public class PlayerCtr : MonoBehaviour
         if (/*timer < FlashTime && !Flash && */Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") >= 0)&&Flash)
         {
             currentState = State.FlashState;
-           
+            anim.SetTrigger("dash");
             currentDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
             if(currentDir.y<0)
             {
@@ -175,7 +175,7 @@ public class PlayerCtr : MonoBehaviour
             AttackSound.Play();
             anim.SetBool("Hit", true);
             currentState = State.AttackState;
-            rig.simulated = false;
+            //rig.simulated = false;
             rig.velocity = Vector2.zero;
         }
     }
@@ -341,7 +341,7 @@ public class PlayerCtr : MonoBehaviour
             HealthCtr.Health--;
         }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ground"))
         {
