@@ -35,6 +35,8 @@ public class PlayerCtr : MonoBehaviour
     public float Invincible_Time = 0.5f;//无敌时间
     private float Invincible_timer = 0;
     public GameObject HitBox;
+    public Transform HookPosition;
+    private GameObject EnemyGameObject;
     // Start is called before the first frame update
     void Start()
     {
@@ -169,19 +171,16 @@ public class PlayerCtr : MonoBehaviour
         HitBox.SetActive(true);
     }
     void OnHookState()
-    {if (Hook.transform.childCount != 0)
-        {
-            if (Vector2.Distance(Hook.transform.GetChild(0).position, transform.position) <= 1.6f)
-
-            {
-                Hook.transform.GetChild(0).SetParent(null);
-            }
-        }
+    {
         HookLine.SetPosition(0, gameObject.transform.position);
         HookLine.SetPosition(1, Hook.gameObject.transform.position);
         rig.simulated = false;
         rig.velocity = Vector2.zero;
         Hook.SetActive(true);
+        if(EnemyGameObject!=null)
+        {
+            EnemyGameObject.transform.Translate((-EnemyGameObject.transform.position + HookPosition.position).normalized * HookLen * Time.deltaTime);
+        }
         if(timer<HookTime/2)
         Hook.gameObject.transform.Translate(new Vector2(currentHookDir.x, currentHookDir.y).normalized * HookLen * Time.deltaTime);
         timer += Time.deltaTime;
@@ -196,7 +195,7 @@ public class PlayerCtr : MonoBehaviour
         //}
             if (timer>=HookTime)
         {
-            
+            EnemyGameObject = null;
             rig.simulated = true;
             timer = 0;
             currentState = State.MoveState;
@@ -209,7 +208,7 @@ public class PlayerCtr : MonoBehaviour
         rig.simulated = false;
         Flash = false;
         //rig.AddForce(-Physics2D.gravity);
-        currentSpeed = Mathf.MoveTowards(currentSpeed, 0, FlashTime * 25);
+        currentSpeed = Mathf.MoveTowards(currentSpeed, 0, FlashTime * 10);
         gameObject.transform.Translate(currentDir.normalized * currentSpeed * Time.deltaTime);
         timer += Time.deltaTime;
         if (timer >= FlashTime)
@@ -306,10 +305,11 @@ public class PlayerCtr : MonoBehaviour
     }
     void HookChildBack(GameObject Enemy)
     {
+        print("31");
         if (!HookBacking)
         {
-            if (Vector2.Distance(Enemy.transform.position, transform.position) > 1.7f)
-            { Enemy.transform.SetParent(Hook.transform); }
+            EnemyGameObject = Enemy;
+            
             timer = HookTime - timer;
             HookBacking = true;
         }

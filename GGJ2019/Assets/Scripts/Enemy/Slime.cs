@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shielder : MonoBehaviour
+public class Slime : Enemy
 {
+    public int health
+    {
+        get { return health; }
+        set { Health = value; }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
