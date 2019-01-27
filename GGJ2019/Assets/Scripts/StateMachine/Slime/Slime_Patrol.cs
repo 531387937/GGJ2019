@@ -56,9 +56,13 @@ public class Slime_Patrol : StateMachineBehaviour
 
     private void CheckPlayer(Animator animator)
     {
-        if (Vector3.Distance(animator.transform.position, transform.position) < slime_data.ViewRange)
-            animator.SetBool("InView", true);
-        else
-            animator.SetBool("InView", false);
+        if(transform != null)
+        {
+            if (Vector3.Distance(animator.transform.position, transform.position) < slime_data.ViewRange)
+                animator.SetBool("InView", true);
+            else
+                animator.SetBool("InView", false);
+        }
+        
     }
 }
