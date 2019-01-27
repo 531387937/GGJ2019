@@ -31,7 +31,7 @@ public class PlayerCtr : MonoBehaviour
     public float drag;
     public AudioSource AttackSound;
     public AudioSource RopeSound;
-    private bool Invincible = false;//是否处于无敌
+    public bool Invincible = false;//是否处于无敌
     public float Invincible_Time = 0.5f;//无敌时间
     private float Invincible_timer = 0;
     public GameObject HitBox;
@@ -54,6 +54,14 @@ public class PlayerCtr : MonoBehaviour
         if(Invincible)//在无敌时
         {
             Invincible_timer += Time.deltaTime;
+            StartCoroutine(wudi());
+           
+        }
+        else
+        {
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            StopAllCoroutines();
+
         }
         if(Invincible_timer>=Invincible_Time)
         {
@@ -349,5 +357,18 @@ public class PlayerCtr : MonoBehaviour
             //Pa.SetActive(false);
             IsOnGround = false;
         }
+    }
+    IEnumerator wudi()
+    {
+       while(true)
+        {
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+            yield return new WaitForSeconds(0.1f);
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+
+
     }
 }
