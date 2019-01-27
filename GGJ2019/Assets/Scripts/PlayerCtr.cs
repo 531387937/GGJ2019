@@ -31,12 +31,13 @@ public class PlayerCtr : MonoBehaviour
     public float drag;
     public AudioSource AttackSound;
     public AudioSource RopeSound;
-    private bool Invincible = false;//是否处于无敌
+    public bool Invincible = false;//是否处于无敌
     public float Invincible_Time = 0.5f;//无敌时间
     private float Invincible_timer = 0;
     public GameObject HitBox;
     public Transform HookPosition;
     private GameObject EnemyGameObject;
+    public GameObject Pa;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +54,14 @@ public class PlayerCtr : MonoBehaviour
         if(Invincible)//在无敌时
         {
             Invincible_timer += Time.deltaTime;
+            StartCoroutine(wudi());
+           
+        }
+        else
+        {
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            StopAllCoroutines();
+
         }
         if(Invincible_timer>=Invincible_Time)
         {
@@ -117,6 +126,8 @@ public class PlayerCtr : MonoBehaviour
     }
     void OnMoveState()
     {
+        
+        rig.simulated = true;
         HitBox.SetActive(false);
         anim.SetBool("Hit", false);
         if (Input.GetAxis("Horizontal") != 0)
@@ -164,10 +175,13 @@ public class PlayerCtr : MonoBehaviour
             AttackSound.Play();
             anim.SetBool("Hit", true);
             currentState = State.AttackState;
+            rig.simulated = false;
+            rig.velocity = Vector2.zero;
         }
     }
     void OnAttackState()
     {
+        //Pa.GetComponent<ParticleSystem>().Play();
         HitBox.SetActive(true);
     }
     void OnHookState()
@@ -331,6 +345,8 @@ public class PlayerCtr : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Ground"))
         {
+            //Pa.SetActive(true);
+            //Pa.GetComponent<ParticleSystem>().Play();
             IsOnGround = true;
         }
     }
@@ -338,7 +354,21 @@ public class PlayerCtr : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            //Pa.SetActive(false);
             IsOnGround = false;
         }
+    }
+    IEnumerator wudi()
+    {
+       while(true)
+        {
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+            yield return new WaitForSeconds(0.1f);
+            this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+
+
     }
 }
