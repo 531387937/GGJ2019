@@ -10,7 +10,7 @@ public class PlayerCtr : MonoBehaviour
     public float JumpForce = 300;
     public float speed;//移动速度
     private bool IsJumping=false;//是否在跳跃
-    private bool Flash = false;//是否冲刺
+    public bool Flash = false;//是否冲刺
     private bool Move = true;//是否无法移动
     public float FlashSpeed;//冲刺速度
     public float FlashTime;//冲刺时间
